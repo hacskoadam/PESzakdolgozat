@@ -1,0 +1,240 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Szakember kereső">
+    <meta name="author" content="Hacskó Ádám">
+    <link rel="icon" href="../../favicon.ico">
+    <title>@ViewBag.Title - Szakember kereső</title>
+    <!-- Bootstrap CSS -->
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/mainpagecss")
+    @Styles.Render("~/Content/languagescss")
+    @*Styles.Render("~/Content/fontawesome2")*@
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" type="text/css" rel="stylesheet">
+
+</head>
+@{var fullUrl = ViewContext.RouteData.Values["controller"]+"/"+ViewContext.RouteData.Values["action"]; }
+<body>
+    <header id="header" class="">
+        <!-- Fixed navbar -->
+    @if (fullUrl == "Home/Index")
+    {
+        @:<nav class="navbar navbar-transparent navbar-fixed-top topnav" id="nav-home" style="background-color:rgba(255,255,255,0)">
+
+    }
+    else
+    {
+        @:<nav class="navbar navbar-fixed-top topnav" id="nav-dev">
+    }
+<div class="container">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+			<i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+
+        </button>
+        <a class="navbar-brand" href="#">
+            @Html.ActionLink("Szakember kereső", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            
+        </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+            <li class="@(fullUrl == "Kereses"? "active":"" )"><a href="@Url.Action("Keres")">Keresés</a></li>
+            <li class="@(fullUrl == "Profile/Create"? "active":"" )">
+                @Html.ActionLink("Adatlap Feltöltés", "Create", "Profile")
+            </li>
+            <li><a href="#about">Infó</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    Nyelv <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu nav-dropdown">
+                    <li><a href="#"><span class="lang-sm lang-lbl" lang="hu"></span> / Hungarian</a></li>
+                    <li><a href="#"><span class="lang-sm lang-lbl" lang="en"></span> / English</a></li>
+                </ul>
+            </li>
+        </ul>
+       @Html.Partial("_LoginPartial")
+            @* <li><a class="auth-button" data-toggle="modal" data-target="#LoginModal">Belépés / Regisztrálás</a></li>*@
+    </div><!--/.nav-collapse -->
+</div>
+</nav>
+    </header><!-- /header -->
+    @if (fullUrl != "Home/Index")
+    {
+        @:<div class="nav-spacer">&nbsp;</div>
+    }
+    <div class="clearfix"></div>
+        @RenderBody()
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-sm-6 footerleft ">
+                    <div class="logofooter"> About</div>
+                    <p>
+                       Szakdolgozat tárgyhoz készült weboldal.
+                    </p>
+                    <p><i class="fa fa-map-pin"></i> Hacskó Ádám.</p>
+                    <p><i class="fa fa-envelope"></i> E-mail : adamhacsko@gmail.com</p>
+
+                </div>
+                <div class="col-md-2 col-sm-6 paddingtop-bottom">
+                    <h6 class="heading7">For Candidates</h6>
+                    <ul class="footer-ul">
+                        <li><a href="#"> Keresés</a></li>
+                        <li><a href="#"> Adatlap feltöltés</a></li>
+                        <li><a href="#"> Bejelentkezés</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 col-sm-6 paddingtop-bottom">
+                    <div class="fb-page" data-href="https://www.facebook.com/profile.php?id=100005010912388" data-tabs="timeline" data-height="300" data-small-header="false" style="margin-bottom:15px;" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                        <div class="fb-xfbml-parse-ignore">
+                            <blockquote cite="https://www.facebook.com/profile.php?id=100005010912388"><a href="https://www.facebook.com/profile.php?id=100005010912388">Facebook</a></blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Modal -->
+    <div class="modal fade" id="LoginModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        ×
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        Login/Registration
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8" style="border-right: 1px dotted #C2C2C2;padding-right: 30px;">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#Login" data-toggle="tab">Login</a></li>
+                                <li><a href="#Registration" data-toggle="tab">Registration</a></li>
+                            </ul>
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="Login">
+                                    <form role="form" class="form-horizontal">
+                                        <div class="form-group">
+                                            <label for="email" class="col-sm-2 control-label">
+                                                Email
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input type="email" class="form-control" id="email1" placeholder="Email" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1" class="col-sm-2 control-label">
+                                                Password
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <input type="email" class="form-control" id="exampleInputPassword1" placeholder="Email" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-2">
+                                            </div>
+                                            <div class="col-sm-10">
+                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                    Submit
+                                                </button>
+                                                <a href="javascript:;">Forgot your password?</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="tab-pane" id="Registration">
+                                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <h4>Create a new account.</h4>
+                                        <hr />
+                                            @Html.ValidationSummary("", new { @class = "text-danger" })
+                                            <div class="form-group">
+                                                <div class="col-md-10">
+                                                    <input class="form-control" data-val="true" data-val-email="The Email field is not a valid e-mail address." data-val-required="The Email field is required." id="Email" name="Email" type="text" value="">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-10">
+                                                    <input class="form-control" data-val="true" data-val-length="The Password must be at least 6 characters long." data-val-length-max="100" data-val-length-min="6" data-val-required="The Password field is required." id="Password" name="Password" type="password">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-10">
+                                                    <input class="form-control" data-val="true" data-val-equalto="The password and confirmation password do not match." data-val-equalto-other="*.Password" id="ConfirmPassword" name="ConfirmPassword" type="password">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-offset-2 col-md-10">
+                                                    <input type="submit" class="btn btn-default" value="Regisztrálás">
+                                                </div>
+                                            </div>
+}
+                                </div>
+                            </div>
+                            <div id="OR" class="hidden-xs">
+                                OR
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row text-center sign-with">
+                                <div class="col-md-12">
+                                    <h3>
+                                        Sign in with
+                                    </h3>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="btn-group btn-group-justified">
+                                        <a href="#" class="btn btn-primary">Facebook</a> <a href="#" class="btn btn-danger">
+                                            Google
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="RegisterModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="modal-title">Modal Header</h2>
+                </div>
+                <div class="modal-body">
+                    <p>Some text in the modal.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+   <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/main")
+
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

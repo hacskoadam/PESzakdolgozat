@@ -1,0 +1,149 @@
+﻿@model szaki.Models.Profile
+@using szaki.Models;
+@{
+	ViewBag.Title = "Create";
+	var htmlField = "isVoip";
+}
+
+<div class="page-title">
+	<div class="container">
+		<h2>Adatlap Feltöltése</h2>
+	</div>
+</div>
+
+<div class="container">
+	<div class="container">
+
+		@if (!User.Identity.IsAuthenticated)
+		{
+			@:<div class="alert alert-info">
+				@:<b>Nem vagy bejelentkezve!</b> Amennyiben vendégként töltesz fel profilt később nem lesz lehetőséged módosítani!</p>
+					@Html.ActionLink("Belépés", "Login", "Account", routeValues: null, htmlAttributes: new { @class = "btn btn-info" })
+			@:</div>
+		}
+
+		@using (Html.BeginForm("Create","Profile",FormMethod.Post, new { enctype = "multipart/form-data" }))
+		{
+			@Html.AntiForgeryToken()
+
+				@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+				<div class="form-group">
+					@Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+					@Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+					@Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+				</div>
+				if (!User.Identity.IsAuthenticated)
+				{
+					<div class="form-group">
+						@Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+						@Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+						@Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+					</div>
+				}
+				<div class="form-group">
+					<div class="location-selector">
+						<select name="location" class="selectpicker form-control" data-live-search="true" title="Település kiválasztása" data-actions-box="true">
+							@foreach (var x in (IEnumerable<IGrouping<string, City>>)ViewBag.Locations)
+							{
+								@:
+								<optgroup label='@x.FirstOrDefault().State' data-collapsible-optgroup="true" data-load-collapse-optgroup="true">
+									@foreach (var y in x.ToList())
+									{
+										@:
+										<option value="@y.Postal_Code">
+											@y.Place_Name
+											</option>
+							}
+								</optgroup>
+							}
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					@Html.LabelFor(model => model.Distance, htmlAttributes: new { @class = "control-label col-md-2" })
+						@Html.EditorFor(model => model.Distance, new { htmlAttributes = new { @class = "form-control" } })
+						@Html.ValidationMessageFor(model => model.Distance, "", new { @class = "text-danger" })
+				</div>
+
+				<div class="form-group">
+					@Html.LabelFor(model => model.IsCompany, htmlAttributes: new { @class = "control-label col-md-2" })
+						<div class="checkbox">
+							@*@Html.EditorFor(model => model.IsCompany)*@
+							@Html.HiddenFor(model => model.IsCompany, new { @Value = false })
+							<div class="btn-group" data-toggle="buttons">
+								<label class="btn btn-info" style="padding-left:12px;">
+									<input type="radio" class="bool-@htmlField" onchange="javascript:$('#@htmlField').val(true);" /> Yes
+								</label>
+								<label class="btn btn-info active" style="padding-left:12px;">
+									<input type="radio" class="bool-@htmlField" onchange="javascript:$('#@htmlField').val(false);" /> No
+								</label>
+							</div>
+							@Html.ValidationMessageFor(model => model.IsCompany, "", new { @class = "text-danger" })
+						</div>
+				</div>
+
+				<div class="form-group">
+					<label for="ProfileImage">Kép hozzáadás:</label> 
+					<input type="file" name="ProfileImage" id="file" class="form-control" /> 
+				</div>
+				
+				<div class="form-group">
+					<label for="selectcategories" class="control-label col-md-2">Kategóriák</label>
+					<select name="selectcategories" class="selectpicker form-control" multiple>
+						@foreach(var x in ViewBag.categories)
+						{
+							@:<optgroup label="@x.Name">
+								foreach (var y in x.SubCategories)
+								{
+									@:<option value="@y.Id">
+									@y.Name
+									@:</option>
+								}
+							@:</optgroup>
+						}
+					</select>
+					@Html.ValidationMessageFor(model => model.ProfilePicture, "", new { @class = "text-danger" })
+				</div>
+
+				<div class="form-group">
+					@Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+						@Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+						@Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+				</div>
+
+				<div class="form-group">
+					@Html.LabelFor(model => model.Phoneno, htmlAttributes: new { @class = "control-label col-md-2" })
+						@Html.EditorFor(model => model.Phoneno, new { htmlAttributes = new { @class = "form-control" } })
+						@Html.ValidationMessageFor(model => model.Phoneno, "", new { @class = "text-danger" })
+				</div>
+
+				if (!User.Identity.IsAuthenticated)
+				{
+					@:<div class="form-group">
+						@Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+						@Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+						@Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+					@:</div>
+				}
+
+				<div class="form-group">
+					@Html.LabelFor(model => model.Rate, htmlAttributes: new { @class = "control-label col-md-2" })
+						@Html.EditorFor(model => model.Rate, new { htmlAttributes = new { @class = "form-control" } })
+						@Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
+				</div>
+
+				<div class="form-group">
+						<input type="submit" value="Küldés!" class="btn btn-default" />
+				</div>
+		}
+
+		<div>
+			@Html.ActionLink("Mégse", "Index")
+		</div>
+	</div>
+</div>
+
+	@section Scripts {
+		@Scripts.Render("~/bundles/jqueryval")
+	}

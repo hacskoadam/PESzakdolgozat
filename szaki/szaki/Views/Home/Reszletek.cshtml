@@ -1,0 +1,89 @@
+﻿@model szaki.Models.Profile
+
+@{
+    ViewBag.Title = "Reszletek";
+}
+
+<div class="page-title">
+	<div class="container">
+			<h2>
+				@Model.Name
+			@if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(Model.Email))
+			{
+				if (Membership.GetUser().Email == Model.Email)
+				{
+					<a href="#" class="btn btn-primary pull-right">Szerkesztés</a>
+				}
+			}
+		</h2>
+	</div>
+</div>
+<div class="container">
+	<div class="col-xs-12 col-sm-4 pull-right">
+		<div class="container">
+			<div class="spacer-5">&nbsp;</div>
+			<h3>Áttekintés</h3>
+		</div>
+		<div class="spacer-5">&nbsp;</div>
+		<div clas="container add-review">
+			<h3>Település</h3>
+			@if (Model.City != null)
+			{
+				<h5>@Model.City.Place_Name</h5>
+			}
+			else
+			{
+				<h5>Ismeretlen</h5>
+			}
+			<h3>Feltötve</h3>
+			<h5>@Model.RegDate.ToString("yyyy-mm-dd hh:MM")</h5>
+			<h3>Órabér</h3>
+			<h5>@Model.Rate HUF/h</h5>
+			<h3>E-mail</h3>
+			<h5>@Model.Email</h5>
+			<h3>Tel.</h3>
+			<h5>@Model.Phoneno</h5>
+
+			<div class="spacer-40">&nbsp;</div>
+			<div class="spacer-40">&nbsp;</div>
+			
+			<div id="map"></div>
+		</div>
+	</div>
+	<div class="col-xs-12 col-sm-8 pull-right">
+		<h3>Részletek</h3>
+		<h5>Szakmák:</h5>
+		@foreach (var x in Model.ProfileCategories)
+		{
+			<span class="label label-success">@x.Category.Name</span><br />
+		}
+		<div class="spacer-5">&nbsp;</div>
+		<hr />
+		<div class="inner-addon right-addon">
+			<div class="panel panel-default">
+				<div class="panel-heading">Leírás</div>
+				<div class="panel-body">@Model.Description</div>
+			</div>
+			
+		</div>
+		<div class="spacer-30">&nbsp;</div>
+	
+	</div>
+</div>
+<div class="container">
+	<p>
+		@Html.ActionLink("Vissza", "Keres")
+	</p>
+
+</div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<script>
+
+	var map = L.map('map').setView([@Model.LocationCoordX.ToString().Replace(",", "."), @Model.LocationCoordY.ToString().Replace(",", ".")], 8);
+	L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: '	&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+	}).addTo(map);
+		var marker = L.marker([@Model.LocationCoordX.ToString().Replace(",","."),@Model.LocationCoordY.ToString().Replace(",", ".")]).addTo(map);
+
+</script>

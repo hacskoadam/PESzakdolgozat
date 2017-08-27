@@ -1,0 +1,109 @@
+﻿@using szaki.Models;
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<!-- https://pixabay.com/en/construction-worker-welding-welder-1717893/ -->
+<div id="banner" style="background-image: url('../../Content/construction.jpg'); height: 650px; background-attachment: fixed; background-size: 1882.71px 1252px; background-position: 50% -272.438px; margin-bottom:30px" data-img-width="2000" data-img-height="1330" data-diff="300" class="workscout-search-banner col-lg-12 with-transparent-header parallax background">
+    <div class="container" id="main-container">
+        <div class="row quick-search-h">
+            <h2>Keresés Szakma szerint</h2>
+        </div>
+        <div class="row">
+			@using (Html.BeginForm("Keres", "Home", FormMethod.Get))
+			{
+				@:<input type="text" name="searchkeyword" class="serch-input col-sm-5 col-md-5 col-lg-5 col-xs-12" placeholder="Kulcsszó" autofocus="">
+				<div class="location-selector">
+					<select name="searchlocation" class="selectpicker serch-input col-sm-5 col-md-5 col-lg-5 col-xs-12" multiple data-live-search="true" title="Település kiválasztása" data-actions-box="true" data-selected-text-format="count>2">
+						@foreach (var x in (IEnumerable<IGrouping<string,City>>)ViewBag.Locations)
+						{
+							@:
+							<optgroup label='@x.FirstOrDefault().State' data-collapsible-optgroup= "true" data-load-collapse-optgroup ="true">
+							@foreach (var y in x.ToList())
+							{
+								@:<option value="@y.Postal_Code">
+									@y.Place_Name
+									@:</option>
+							}
+							</optgroup>
+						}
+					</select>
+					<button class="search-submit col-sm-12 col-lg-1 pull-right"><i class="fa fa-search" aria-hidden="true"></i></button>
+				</div>
+			}
+                
+        </div><br>
+        <div class="row">
+            <span class="brws-lbl">Vagy keress<a href="@Url.Action("Kategoriak","Home")" class="brws-btn">Kategóriák szerint</a> </span>
+        </div>
+        <div class="row cnt-offers">
+            <span><strong>@ViewBag.CountAdds</strong> Szakember várja ajánlatkérésed </span>
+        </div>
+    </div>
+</div>
+<div class="container popular-categories">
+    <h3>Népszerű kategórák</h3>
+
+	@foreach (var x in ViewBag.MostUsedMainCategories)
+	{
+
+		<div class="col-lg-3 col-md-6 col-sm-12 popular-category">
+			<a href="@Url.Action("Keres", "Home",new { searchMainCategory= x.Id })">
+				<div class="row"><i class="fa @x.Icon fa-3x" aria-hidden="true"></i></div>
+				<div class="row">@x.Name</div>
+			</a>
+        </div>
+    }
+    <center>
+		<a href="@Url.Action("Kategoriak","Home")" class="btn all-category-btn">Összes Kategória</a>
+    </center>
+</div>
+<div>
+    <div class="container recent-ads">
+        <h3>Legújabb szekmberek</h3>
+
+		@foreach (var x in ViewBag.LastProfiles)
+		{
+			<div class="col-xs-12 recent-ad">
+				<div class="col-xs-2 col-md-1 nopadding">
+					<img src="../../Content/image-not-found-alpha.png" alt="notfound" width="75">
+				</div>
+				<div class="col-xs-10 col-md-11 rcnt-ad-desc">
+					<h4> @x.Name </h4>
+					<p>
+						@x.Description @*TODO: Truncate str*@
+					</p>
+					<p>@x.Rate HUF/h</p>
+				</div>
+			</div>
+		}
+       
+        <center>
+            <a class="btn all-category-btn" href="@Url.Action("Keres")">Szakember keresés</a>
+        </center>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+		$("input[name='search-location'").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+					url: "/Home/LocationAutocomplete",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.Name };
+                        }))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+    })
+</script>  

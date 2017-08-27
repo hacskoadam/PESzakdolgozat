@@ -1,0 +1,203 @@
+﻿@model IPagedList<szaki.Models.Profile>
+@using szaki.Models;
+@using PagedList; 
+@using PagedList.Mvc; 
+
+
+@{
+	ViewBag.Title = "Keres";
+}
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<div class="page-title">
+	<div class="container">
+		<h2>Keresés eredménye: @Model.TotalItemCount találat</h2>
+	</div>
+</div>
+<div id="map" class="margin-minus-40"></div>
+<div class="container">
+	@using (Html.BeginForm("Keres", "Home", FormMethod.Get))
+	{
+	<div class="col-xs-12 col-sm-4 pull-right">
+		<div clas="container">
+			<div class="spacer-5">&nbsp;</div>
+			<h3>Szakma</h3>
+			<select name="searchCategories" class="selectpicker form-control input-item" multiple title="Szakma kiválasztása" data-actions-box="true" data-selected-text-format="count>4">
+				@foreach (var x in ViewBag.categories)
+				{
+					@:<optgroup label="@x.Name">
+					foreach (var y in x.SubCategories)
+					{
+						if (ViewData["searchCategories"] != null)
+						{
+							var items = ((int[])ViewData["searchCategories"]).ToList();
+							if (items.Contains(Convert.ToInt32(y.Id)))
+							{
+								@:<option value="@y.Id" selected>
+								@y.Name
+								@:</option>
+							}
+							else
+							{
+								@:<option value="@y.Id">
+								@y.Name
+								@:</option>
+							}
+						}
+						else
+						{
+							@:<option value="@y.Id">
+							@y.Name
+							@:</option>
+						}
+
+					}
+					@:</optgroup>
+				}
+			</select>
+			<h3>Település</h3>
+			<select name="searchlocation" class="selectpicker form-control input-item" multiple data-live-search="true" title="Település kiválasztása" data-actions-box="true" data-selected-text-format="count>4">
+				@foreach (var x in (IEnumerable<IGrouping<string, City>>)ViewData["Cities"])
+				{
+					@:
+					<optgroup label='@x.FirstOrDefault().State' data-collapsible-optgroup= "true" data-load-collapse-optgroup ="true">
+					@foreach (var y in x.ToList())
+					{
+						if (ViewData["searchlocation"] != null)
+						{
+							var items = ((int[])ViewData["searchlocation"]).ToList();
+							if (items.Contains(Convert.ToInt32(y.Postal_Code)))
+							{
+								@:<option value="@y.Postal_Code" selected>
+								@y.Place_Name
+								@:</option>
+							}
+							else
+							{
+								@:<option value="@y.Postal_Code">
+								@y.Place_Name
+								@:</option>
+							}
+						}
+						else
+						{
+							@:<option value="@y.Postal_Code">
+							@y.Place_Name
+							@:</option>
+						}
+
+					}
+					</optgroup>
+				}
+			</select>
+			<div class="spacer-5">&nbsp;</div>
+			<p>
+				<label for="amount2">Órabér:</label>
+				<input type="text" id="amount2" readonly style="border:0; color:#f6931f; font-weight:bold;" name="searchRange">
+			</p>
+
+			<div id="slider-range2" data-min="@ViewData["RangeMin"]" data-max="@ViewData["RangeMax"]" data-from="@ViewData["searchRangeMin"]" data-to="@ViewData["searchRangeMax"]"></div>
+			<div class="spacer-20">&nbsp;</div>
+			<div class="form-group">
+				<input type="submit" class="btn btn-info" value="Keresés" />
+			</div>
+
+		</div>
+	</div>
+	<div class="col-xs-12 col-sm-8 pull-right">
+		<h3>Keresési találatok</h3>
+		<div class="spacer-5">&nbsp;</div>
+		<div class="right-inner-addon fixed-input">
+			<i class="glyphicon glyphicon-search" onclick="$(this).closest('form').submit();"></i>
+			<input type="search"
+				   class="form-control"
+				   placeholder="kulcsszó"
+				   name="searchkeyword"
+				   value="@ViewData["searchkeyword"]" />
+		</div>
+	</div>
+	}
+	<div class="col-xs-12 col-sm-8 pull-right">
+		
+		<div class="recent-ads">
+			<div class="spacer-30">&nbsp;</div>
+			@foreach (var item in Model)
+			{
+				<a href="@Url.Action("Reszletek", new { id = item.Id })">
+					<div class="col-xs-12 col-sm-12 recent-ad">
+						<div class="col-xs-2 col-md-2 nopadding">
+							@if (String.IsNullOrEmpty(item.ProfilePicture))
+							{
+								<img src='~/Content/image-not-found-alpha.png' alt="notfound" width="75" onerror="this.src='';">
+							}
+							else
+							{
+								<img src='~/Uploads/profile/@item.ProfilePicture' alt="notfound" width="75" onerror="this.src='';">
+							}
+						</div>
+						<div class="col-xs-10 col-md-10 rcnt-ad-desc">
+							<h4>@Html.DisplayFor(modelItem => item.Name)</h4>
+							<p>
+								@Html.DisplayFor(modelItem => item.Description)
+							</p>
+							<p>@Html.DisplayFor(modelItem => item.City.Place_Name)</p>
+						</div>
+					</div>
+				</a>
+			}
+			<form>
+				<div class="form-inline col-lg-11 col-lg-offset-1">
+					<div class="control-label col-lg-2 col-lg-offset-2" style="margin-top: 5px">
+						Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+					</div>
+					<div class="col-lg-5">
+						@{
+
+							String cats = "";
+							foreach(var x in (int[])ViewData["searchCategories"])
+							{
+								cats += Html.Raw("&searchCategories="+x);
+							}
+
+							@Html.PagedListPager(Model, page => Url.Action("Keres", "Home", new { page, searchkeyword = ViewData["searchkeyword"], searchlocation = ViewData["searchlocation"], searchRange = ViewData["searchRange"], searchCategories = cats.Replace("%2526","&") }), PagedListRenderOptions.OnlyShowFivePagesAtATime)
+						}
+					</div>
+
+				</div>
+			</form>
+	</div>
+</div>
+	</div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<script>
+
+	var map = L.map('map').setView([47.1028087, 17.9093019], 8);
+		map.scrollWheelZoom.disable();
+	L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: '	&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+	}).addTo(map);
+	@foreach(var x in Model)
+		{
+		@:var marker = L.marker([@x.LocationCoordX.ToString().Replace(",","."),@x.LocationCoordY.ToString().Replace(",", ".")]).addTo(map);
+	}
+
+</script>
+<script>
+	document.onreadystatechange = function () {
+		$("#slider-range2").slider({
+			range: true,
+			min: parseInt($("#slider-range2").data("min")),
+			max: parseInt($("#slider-range2").data("max")),
+			values: [$("#slider-range2").data("from"), $("#slider-range2").data("to")],
+			slide: function (event, ui) {
+				$("#amount2").val("" + ui.values[0] + " - " + ui.values[1]);
+			}
+		});
+		$("#amount2").val("$" + $("#slider-range2").slider("values", 0) +
+			" - $" + $("#slider-range2").slider("values", 1));
+
+	};
+</script>
+
+
+

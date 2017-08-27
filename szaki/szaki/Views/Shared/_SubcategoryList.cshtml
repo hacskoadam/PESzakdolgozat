@@ -1,0 +1,9 @@
+﻿@model IEnumerable<szaki.Models.Category>
+
+
+<ul>
+	@foreach (var item in Model)
+	{
+		<li><a href="@Url.Action("Keres","Home", new { searchCategories =@item.Id})">@Html.DisplayFor(modelItem => item.Name)</a></li>
+	}
+</ul>

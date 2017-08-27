@@ -1,0 +1,24 @@
+﻿@model IEnumerable<szaki.Models.MainCategory>
+
+@{
+    ViewBag.Title = "Kategoriak";
+}
+
+<div class="page-title">
+	<div class="container">
+		<h2>
+			Kategóriák
+		</h2>
+	</div>
+</div>
+<div class="container">
+	<div class="categories-list">
+	<ul>
+		@foreach (var item in Model)
+		{
+			<li class="categories-list-level-one">@Html.DisplayFor(modelItem => item.Name)</li>
+			@Html.Partial("_SubcategoryList",item.SubCategories)
+		}
+	</ul>
+	</div>
+</div>
