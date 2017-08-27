@@ -39,6 +39,21 @@ namespace szaki
 					  "~/Content/languages.css"));
 			bundles.Add(new StyleBundle("~/Content/fontawesome2").Include(
 					  "~/Content/fontawesome/font-awesome.css"));
+			bundles.Add(new StyleBundle("~/Content/admincss").Include(
+				"~/Content/bootstrap.min.css",
+				"~/Content/metisMenu.min.css",
+				"~/Content/timeline.css",
+				"~/Content/morris.css",
+				"~/Content/font-awesome.min.css",
+				"~/Content/style.css"));
+			bundles.Add(new ScriptBundle("~/Content/adminjs").Include(
+				"~/Scripts/jquery.min.js",
+				"~/Scripts/bootstrap.min.js",
+				"~/Scripts/metisMenu.min.js",
+				"~/Scripts/timeline-min.js",
+				"~/Scripts/raphael-min.js",
+				"~/Scripts/morris.min.js",
+				"~/Scripts/admin.js"));
 		}
 	}
 }
